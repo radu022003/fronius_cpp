@@ -3,7 +3,7 @@
 int main(int argc, char **argv)
 {
 
-	auto inverter = FroniusClient::create();
+	//auto inverter = FroniusClient::create();
 	if (argc != 2)
 	{
 		cout << "Usage: " << argv[0] << " <uri>" << endl;

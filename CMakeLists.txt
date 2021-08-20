@@ -10,7 +10,7 @@ unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
 #set(CMAKE_CXX_TARGET_INCLUDE_PATH "/usr/local/include")
 
 include_directories(src src/include include)
-link_directories(lib/poco)
+link_directories(lib/poco lib/yaml)
 add_subdirectory(src)
 
 if(NOT ${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/arm-linux-gnueabi-g++")
