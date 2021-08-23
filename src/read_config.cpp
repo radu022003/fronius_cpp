@@ -45,12 +45,11 @@ YAML::Node ReadConfig::create_default_data()
     YAML::Node dbNode = YAML::Load("{user: admin, pass: admin, ip: localhost}");
     node["database"] = dbNode;
     node["freq"] = 10;
-    node["ip_address"] = "192.168.100.116";
+    node["host"] = "localhost:80";
     return node;
 }
 
-std::unique_ptr<YAML::Node> ReadConfig::parseConfig()
+std::shared_ptr<YAML::Node> ReadConfig::parseConfig(std::string const &fileName)
 {
-    YAML::Node node = YAML::LoadFile("config.yaml");
-    return std::make_unique<YAML::Node>(node);
+    return std::make_shared<YAML::Node>(YAML::LoadFile(fileName));
 }
