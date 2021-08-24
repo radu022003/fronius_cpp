@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <yaml-cpp/yaml.h>
+#include <memory>
 
 using namespace Poco::Net;
 using namespace Poco;
@@ -19,14 +20,25 @@ class FroniusClient
 {
 private:
     /* data */
-    HTTPClientSession m_session;
+    std::shared_ptr<HTTPClientSession> m_session;
     HTTPRequest m_req;
     HTTPResponse m_res;
     URI m_uri;
+    std::string m_apiVersion{};
 
-    FroniusClient(std::shared_ptr<YAML::Node> parentNode);
+    FroniusClient(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session);
 
 public:
-    static FroniusClient *create(std::shared_ptr<YAML::Node> parentNode);
+    static FroniusClient *create(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session);
+    void getApiVersion();
+    const std::string getHost()
+    {
+        return m_session->getHost();
+    };
+    const uint16_t getPort()
+    {
+        return m_session->getPort();
+    };
+
     ~FroniusClient();
 };

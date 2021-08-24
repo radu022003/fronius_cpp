@@ -6,7 +6,11 @@ int main()
 	std::cout << "Fronius client app started\nLooking for config.yaml file" << std::endl;
 	auto config = ReadConfig::create();
 	std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
-	auto inverter = FroniusClient::create(parentNode);
+	auto session = std::make_unique<HTTPClientSession>();
+	URI uri((*parentNode)["host"].as<std::string>());
+	session->setHost(uri.getHost());
+	session->setPort(uri.getPort());
+	auto inverter = FroniusClient::create(parentNode, std::move(session));
 
 	return 0;
 }
