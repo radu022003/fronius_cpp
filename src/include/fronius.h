@@ -26,7 +26,7 @@ private:
     URI m_uri;
     std::string m_apiVersion{};
 
-    FroniusClient(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session);
+    FroniusClient(std::shared_ptr<HTTPClientSession> session);
 
 public:
     static FroniusClient *create(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session);

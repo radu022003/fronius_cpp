@@ -19,15 +19,9 @@ private:
 
 public:
     HTTPClientSessionMock(/* args */){};
-    ~HTTPClientSessionMock(){};
+    virtual ~HTTPClientSessionMock(){};
     MOCK_METHOD1(receiveResponse, std::istream &(HTTPResponse &res));
     MOCK_METHOD1(sendRequest, std::ostream &(HTTPRequest &request));
-    //MOCK_CONST_METHOD0(getHost, const std::string());
-    //MOCK_CONST_METHOD0(getReason, std::string());
-    inline const std::string &getHost() const
-    {
-        return resp;
-    }
 };
 
 TEST(yaml_config, create_file_with_default_values_if_none_exists)
@@ -64,21 +58,19 @@ TEST(yaml_config, create_fronius_client_from_config)
     EXPECT_NE(config, nullptr);
     EXPECT_NE(inverter, nullptr);
 
-    std::filebuf fb;
-    cout
-        << "open api_version.txt" << endl;
-    fb.open("api_version.txt", std::ios::in);
-    std::streambuf stbuf();
-
-    std::istream is(&fb);
-    fb.close();
+    std::istringstream str(R"!(
+{
+    "APIVersion" : 1,
+    "BaseURL" : "/solar_api/v1/",
+    "CompatibilityRange" : "1.5-18"
+}
+    )!");
     std::ostream &os = std::cout;
-
     EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
-    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(is));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(str));
 
-    cout << "get api version" << endl;
     inverter->getApiVersion();
-    session.reset();
-    delete session.get();
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
 }

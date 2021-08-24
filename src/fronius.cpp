@@ -1,6 +1,6 @@
 #include <fronius.h>
 
-FroniusClient::FroniusClient(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session)
+FroniusClient::FroniusClient(std::shared_ptr<HTTPClientSession> session)
 {
     //std::cout << "session host in constr: " << session->getHost() << endl;
     m_session = std::move(session);
@@ -18,7 +18,7 @@ FroniusClient *FroniusClient::create(std::shared_ptr<YAML::Node> parentNode, std
     session->setHost(uri.getHost());
     session->setPort(uri.getPort());
     //std::cout << "session host in create: " << session->getHost() << endl;
-    return new FroniusClient(parentNode, std::move(session));
+    return new FroniusClient(std::move(session));
 }
 
 void FroniusClient::getApiVersion()
@@ -30,11 +30,8 @@ void FroniusClient::getApiVersion()
     m_session->sendRequest(req);
     // get response
     HTTPResponse res;
-    //cout << "host: " << m_session->getHost() << endl;
     // print response
-    cout << "receiveResponse" << endl;
     istream &is = m_session->receiveResponse(res);
     cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
-    //StreamCopier::copyStream(is, cout);
-    cout << "got response: " << is.good() << is.rdbuf() << endl;
+    StreamCopier::copyStream(is, cout);
 }
