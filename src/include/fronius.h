@@ -69,7 +69,7 @@ public:
         return m_apiVersion;
     }
 
-    PowerFlow &getFlowPowerData()
+    const PowerFlow &getFlowPowerData()
     {
         return m_powerFlow;
     }

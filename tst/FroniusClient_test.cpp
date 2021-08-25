@@ -123,7 +123,7 @@ TEST(test_Inverter2, get_api_version_from_inverter)
 
     inverter->getPowerFlow();
 
-    const auto power = inverter->getFlowPowerData();
+    const auto &power = inverter->getFlowPowerData();
 
     EXPECT_DOUBLE_EQ(power.dP_Grid, -511.99000000000001);
     EXPECT_DOUBLE_EQ(power.dP_Load, 5.9900000000000091);

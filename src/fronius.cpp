@@ -82,7 +82,6 @@ void FroniusClient::getPowerFlow()
         return;
     }
 
-    
     assert((*d)["Body"]["Data"]["Site"].HasMember("P_Load"));
     assert((*d)["Body"]["Data"]["Site"]["P_Load"].IsDouble());
     m_powerFlow.dP_Load = (*d)["Body"]["Data"]["Site"]["P_Load"].GetDouble();
