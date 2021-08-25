@@ -42,6 +42,17 @@ private:
         int iE_Day;
         double dE_Total;
         double dE_Year;
+
+        friend ostream &operator<<(ostream &output, const PowerFlow &P)
+        {
+            output << "Load : " << P.dP_Load << endl;
+            output << "Grid : " << P.dP_Grid << endl;
+            output << "PV : " << P.dP_PV << endl;
+            output << "Day : " << P.iE_Day << endl;
+            output << "Year : " << P.dE_Year << endl;
+            output << "Total : " << P.dE_Total << endl;
+            return output;
+        }
     } m_powerFlow;
 
     FroniusClient(std::shared_ptr<HTTPClientSession> session);
