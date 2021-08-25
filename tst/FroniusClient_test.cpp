@@ -3,6 +3,7 @@
 #include <read_config.h>
 #include <fronius.h>
 #include <fstream>
+#include "test_data.h"
 
 using ::testing::NiceMock;
 using ::testing::Return;
@@ -57,6 +58,24 @@ TEST(yaml_config, create_fronius_client_from_config)
 
     EXPECT_NE(config, nullptr);
     EXPECT_NE(inverter, nullptr);
+}
+
+TEST(test_Inverter, get_api_version_from_inverter)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
 
     std::istringstream str(R"!(
 {
@@ -68,8 +87,51 @@ TEST(yaml_config, create_fronius_client_from_config)
     std::ostream &os = std::cout;
     EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
     EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(str));
+    EXPECT_EQ(inverter->getBaseURL(), "");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 0);
 
     inverter->getApiVersion();
+
+    EXPECT_EQ(inverter->getBaseURL(), "/solar_api/v1/");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 1);
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
+
+TEST(test_Inverter2, get_api_version_from_inverter)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::ostream &os = std::cout;
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_GetPowerFlowRealtimeData));
+
+    inverter->getPowerFlow();
+
+    const auto power = inverter->getFlowPowerData();
+
+    EXPECT_DOUBLE_EQ(power.dP_Grid, -511.99000000000001);
+    EXPECT_DOUBLE_EQ(power.dP_Load, 5.9900000000000091);
+    EXPECT_DOUBLE_EQ(power.dP_PV, 941.60000000000002);
+    EXPECT_EQ(power.iE_Day, 6758);
+    EXPECT_DOUBLE_EQ(power.dE_Total, 7604385.5);
+    EXPECT_DOUBLE_EQ(power.dE_Year, 1342638.2000000002);
+
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
     session.~__shared_ptr();
