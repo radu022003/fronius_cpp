@@ -2,7 +2,6 @@
 
 FroniusClient::FroniusClient(std::shared_ptr<HTTPClientSession> session) : m_apiVersion(0)
 {
-    //std::cout << "session host in constr: " << session->getHost() << endl;
     m_session = std::move(session);
     m_uri.setHost(m_session->getHost());
     m_uri.setPort(m_session->getPort());
@@ -17,7 +16,7 @@ FroniusClient *FroniusClient::create(std::shared_ptr<YAML::Node> parentNode, std
     URI uri("http://" + (*parentNode)["host"].as<std::string>());
     session->setHost(uri.getHost());
     session->setPort(uri.getPort());
-    //std::cout << "session host in create: " << session->getHost() << endl;
+
     return new FroniusClient(std::move(session));
 }
 
@@ -33,13 +32,12 @@ void FroniusClient::getApiVersion()
     // print response
     istream &is = m_session->receiveResponse(res);
     cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
-    //StreamCopier::copyStream(is, cout);
+
     std::string response{};
     StreamCopier::copyToString(is, response);
-    //cout << response << endl;
-    //const char *json = "{\"project\":\"Your_Project_name\",\"Num_stars\":10}";
+
     Document d;
-    //assert(d.IsObject());
+
     d.Parse(response.c_str());
     if (d.Parse(response.c_str()).HasParseError())
     {
@@ -69,11 +67,9 @@ void FroniusClient::getPowerFlow()
 
     std::string response{};
     StreamCopier::copyToString(is, response);
-    //cout << response << endl;
 
     auto d = std::make_unique<Document>();
-    //Document d;
-    //assert(d.IsObject());
+
     d->Parse(response.c_str());
     if (d->Parse(response.c_str()).HasParseError())
     {

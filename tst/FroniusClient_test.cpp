@@ -4,6 +4,7 @@
 #include <fronius.h>
 #include <fstream>
 #include "test_data.h"
+#include <sqlite_conn.h>
 
 using ::testing::NiceMock;
 using ::testing::Return;
@@ -11,6 +12,16 @@ using ::testing::ReturnRef;
 using namespace Poco::Net;
 using namespace Poco;
 using namespace std;
+
+class SessionMock : public Poco::Data::Session
+{
+private:
+    /* data */
+public:
+    SessionMock(const std::string &connector,
+                const std::string &connectionString) : Poco::Data::Session(connector, connectionString){};
+    virtual ~SessionMock(){};
+};
 
 class HTTPClientSessionMock : public HTTPClientSession
 {
@@ -125,8 +136,8 @@ TEST(test_Inverter2, get_api_version_from_inverter)
 
     const auto &power = inverter->getFlowPowerData();
 
-    EXPECT_DOUBLE_EQ(power.dP_Grid, -511.99000000000001);
     EXPECT_DOUBLE_EQ(power.dP_Load, 5.9900000000000091);
+    EXPECT_DOUBLE_EQ(power.dP_Grid, -511.99000000000001);
     EXPECT_DOUBLE_EQ(power.dP_PV, 941.60000000000002);
     EXPECT_EQ(power.iE_Day, 6758);
     EXPECT_DOUBLE_EQ(power.dE_Total, 7604385.5);
@@ -135,4 +146,22 @@ TEST(test_Inverter2, get_api_version_from_inverter)
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
     session.~__shared_ptr();
+}
+
+TEST(test_sqlite, create_table)
+{
+    //arrange
+    //act
+    //assert
+    Poco::Data::SQLite::Connector::registerConnector();
+    auto session_ptr = std::make_unique<SessionMock>("SQLite", "sample.db");
+    auto db = SqliteConn::create(std::move(session_ptr));
+    PowerFlow sampleData = {
+        5.9900000000000091,
+        -511.99000000000001,
+        941.60000000000002,
+        6758,
+        7604385.5,
+        1342638.2000000002};
+    //db->insert(sampleData);
 }
