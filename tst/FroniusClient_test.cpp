@@ -153,9 +153,7 @@ TEST(test_sqlite, create_table)
     //arrange
     //act
     //assert
-    Poco::Data::SQLite::Connector::registerConnector();
-    auto session_ptr = std::make_unique<SessionMock>("SQLite", "sample.db");
-    auto db = SqliteConn::create(std::move(session_ptr));
+    auto db = SqliteConn::create("sample.db");
     PowerFlow sampleData = {
         5.9900000000000091,
         -511.99000000000001,

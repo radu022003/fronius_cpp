@@ -21,7 +21,7 @@ private:
     SqliteConn(std::unique_ptr<Poco::Data::Session> session);
 
 public:
-    static SqliteConn *create(std::unique_ptr<Poco::Data::Session> session);
+    static SqliteConn *create(std::string const &fileName);
     void insert(const PowerFlow &data);
     ~SqliteConn();
 };
