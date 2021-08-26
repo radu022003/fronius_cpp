@@ -148,6 +148,43 @@ TEST(test_Inverter2, get_api_version_from_inverter)
     session.~__shared_ptr();
 }
 
+TEST(test_Inverter2, get_api_version_from_inverter2)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::ostream &os = std::cout;
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_GetPowerFlowRealtimeData2));
+
+    inverter->getPowerFlow();
+
+    const auto &power = inverter->getFlowPowerData();
+
+    EXPECT_DOUBLE_EQ(power.dP_Load, -57.649999999999977);
+    EXPECT_DOUBLE_EQ(power.dP_Grid, -975.35000000000002);
+    EXPECT_DOUBLE_EQ(power.dP_PV, 1033);
+    EXPECT_EQ(power.iE_Day, 15039);
+    EXPECT_DOUBLE_EQ(power.dE_Total, 2777190);
+    EXPECT_DOUBLE_EQ(power.dE_Year, 2777198.75);
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
+
 TEST(test_sqlite, create_table)
 {
     //arrange

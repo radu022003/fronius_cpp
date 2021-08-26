@@ -115,3 +115,169 @@ std::istringstream FroniusHybridSys_GetPowerFlowRealtimeData(R"!(
     }
 }
 )!");
+
+std::istringstream FroniusHybridSys_GetPowerFlowRealtimeData2(R"!(
+{
+   "Body" : {
+      "Data" : {
+         "Inverters" : {
+            "1" : {
+               "DT" : 81,
+               "E_Day" : 15039,
+               "E_Total" : 2777190,
+               "E_Year" : 2777198.75,
+               "P" : 1033
+            }
+         },
+         "Site" : {
+            "E_Day" : 15039,
+            "E_Total" : 2777190,
+            "E_Year" : 2777198.75,
+            "Meter_Location" : "grid",
+            "Mode" : "meter",
+            "P_Akku" : null,
+            "P_Grid" : -975.35000000000002,
+            "P_Load" : -57.649999999999977,
+            "P_PV" : 1033,
+            "rel_Autonomy" : 100,
+            "rel_SelfConsumption" : 5.5808325266214887
+         },
+         "Version" : "12"
+      }
+   },
+   "Head" : {
+      "RequestArguments" : {},
+      "Status" : {
+         "Code" : 0,
+         "Reason" : "",
+         "UserMessage" : ""
+      },
+      "Timestamp" : "2021-08-25T17:13:09+03:00"
+   }
+}
+)!");
+
+std::istringstream FroniusHybridSys_InverterRealtimeData(R"!(
+{
+   "Body" : {
+      "Data" : {
+         "DAY_ENERGY" : {
+            "Unit" : "Wh",
+            "Values" : {
+               "1" : 15173
+            }
+         },
+         "PAC" : {
+            "Unit" : "W",
+            "Values" : {
+               "1" : 955
+            }
+         },
+         "TOTAL_ENERGY" : {
+            "Unit" : "Wh",
+            "Values" : {
+               "1" : 2777329
+            }
+         },
+         "YEAR_ENERGY" : {
+            "Unit" : "Wh",
+            "Values" : {
+               "1" : 2777333
+            }
+         }
+      }
+   },
+   "Head" : {
+      "RequestArguments" : {
+         "DeviceClass" : "Inverter",
+         "Scope" : "System"
+      },
+      "Status" : {
+         "Code" : 0,
+         "Reason" : "",
+         "UserMessage" : ""
+      },
+      "Timestamp" : "2021-08-25T17:21:22+03:00"
+   }
+}
+)!");
+
+std::istringstream FroniusHybridSys_MeterRealtimeData(R"!(
+{
+   "Body" : {
+      "Data" : {
+         "Current_AC_Phase_1" : 3.9550000000000001,
+         "Current_AC_Sum" : 3.9550000000000001,
+         "Details" : {
+            "Manufacturer" : "Fronius",
+            "Model" : "Smart Meter 63A-1",
+            "Serial" : "19280280"
+         },
+         "Enable" : 1,
+         "EnergyReactive_VArAC_Phase_1_Consumed" : 550240,
+         "EnergyReactive_VArAC_Phase_1_Produced" : 936080,
+         "EnergyReactive_VArAC_Sum_Consumed" : 550240,
+         "EnergyReactive_VArAC_Sum_Produced" : 936080,
+         "EnergyReal_WAC_Minus_Absolute" : 2584992,
+         "EnergyReal_WAC_Phase_1_Consumed" : 206254,
+         "EnergyReal_WAC_Phase_1_Produced" : 2584992,
+         "EnergyReal_WAC_Plus_Absolute" : 206254,
+         "EnergyReal_WAC_Sum_Consumed" : 206254,
+         "EnergyReal_WAC_Sum_Produced" : 2584992,
+         "Frequency_Phase_Average" : 50,
+         "Meter_Location_Current" : 0,
+         "PowerApparent_S_Phase_1" : 897.77999999999997,
+         "PowerApparent_S_Sum" : 897.77999999999997,
+         "PowerFactor_Phase_1" : 0.94999999999999996,
+         "PowerFactor_Sum" : 0.94999999999999996,
+         "PowerReactive_Q_Phase_1" : 197.62,
+         "PowerReactive_Q_Sum" : 197.62,
+         "PowerReal_P_Phase_1" : -860.48000000000002,
+         "PowerReal_P_Sum" : -860.48000000000002,
+         "TimeStamp" : 1629900467,
+         "Visible" : 1,
+         "Voltage_AC_Phase_1" : 227
+      }
+   },
+   "Head" : {
+      "RequestArguments" : {
+         "DeviceClass" : "Meter",
+         "DeviceId" : "0",
+         "Scope" : "Device"
+      },
+      "Status" : {
+         "Code" : 0,
+         "Reason" : "",
+         "UserMessage" : ""
+      },
+      "Timestamp" : "2021-08-25T17:07:48+03:00"
+   }
+}
+)!");
+
+std::istringstream FroniusHybridSys_InverterInfo(R"!(
+{
+   "Body" : {
+      "Data" : {
+         "1" : {
+            "CustomName" : "&#80;&#114;&#105;&#109;&#111;&#32;&#51;&#46;&#48;&#45;&#49;&#32;&#40;&#49;&#41;",
+            "DT" : 81,
+            "ErrorCode" : 0,
+            "PVPower" : 3420,
+            "Show" : 1,
+            "StatusCode" : 7,
+            "UniqueID" : "1148686"
+         }
+      }
+   },
+   "Head" : {
+      "RequestArguments" : {},
+      "Status" : {
+         "Code" : 0,
+         "Reason" : "",
+         "UserMessage" : ""
+      },
+      "Timestamp" : "2021-08-25T17:15:51+03:00"
+   }
+}
+)!");
