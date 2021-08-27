@@ -19,7 +19,7 @@ int main()
 		const auto &power = inverter->getFlowPowerData();
 		cout << power;
 		sleep(1);
-		db->insert(power);
+		db->insert(const_cast<PowerFlow &>(power));
 	}
 
 	return 0;

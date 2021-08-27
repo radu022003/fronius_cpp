@@ -1,17 +1,16 @@
 #pragma once
 #include "Poco/Data/Session.h"
 #include "Poco/Data/SQLite/Connector.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTime.h"
+#include "Poco/DateTimeFormat.h"
+#include "Poco/DateTimeFormatter.h"
 #include <iostream>
 #include <fronius.h>
 
 using namespace Poco::Data::Keywords;
 using Poco::Data::Session;
 using Poco::Data::Statement;
-
-struct Data
-{
-    /* data */
-};
 
 class SqliteConn
 {
@@ -22,6 +21,6 @@ private:
 
 public:
     static SqliteConn *create(std::string const &fileName);
-    void insert(const PowerFlow &data);
+    void insert(PowerFlow &data);
     ~SqliteConn();
 };

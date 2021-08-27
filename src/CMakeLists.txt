@@ -7,7 +7,7 @@ set(SOURCES ${SOURCES})
 set(HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/fronius.h)
 
 if(${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/arm-linux-gnueabi-g++")
-	set(LIB_TO_INCLUDE PocoUtil.a PocoJSON.a PocoNet.a PocoFoundation.a PocoData.a PocoDataSQLite.a yaml-cpp.a -lpthread)
+	set(LIB_TO_INCLUDE -lpthread PocoJSON.a PocoNet.a PocoFoundation.a PocoData.a PocoDataSQLite.a yaml-cpp.a PocoUtil.a)
 else()
 	set(LIB_TO_INCLUDE -lpthread -lPocoJSON -lPocoNet -lPocoFoundation -lPocoData -lPocoDataSQLite -lyaml-cpp -lPocoUtil)
 endif()

@@ -13,16 +13,6 @@ using namespace Poco::Net;
 using namespace Poco;
 using namespace std;
 
-class SessionMock : public Poco::Data::Session
-{
-private:
-    /* data */
-public:
-    SessionMock(const std::string &connector,
-                const std::string &connectionString) : Poco::Data::Session(connector, connectionString){};
-    virtual ~SessionMock(){};
-};
-
 class HTTPClientSessionMock : public HTTPClientSession
 {
 private:
@@ -198,5 +188,21 @@ TEST(test_sqlite, create_table)
         6758,
         7604385.5,
         1342638.2000000002};
-    //db->insert(sampleData);
+}
+
+TEST(test_sqlite, insert_values)
+{
+    //arrange
+    //act
+    //assert
+
+    PowerFlow sampleData = {
+        5.9900000000000091,
+        -511.99000000000001,
+        941.60000000000002,
+        6758,
+        7604385.5,
+        1342638.2000000002};
+    auto db = SqliteConn::create("sample2.db");
+    db->insert(sampleData);
 }
