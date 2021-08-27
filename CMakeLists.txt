@@ -8,7 +8,7 @@ unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
 unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
 
 #set(CMAKE_CXX_TARGET_INCLUDE_PATH "/usr/local/include")
-
+set(CMAKE_VERBOSE_MAKEFILE ON)
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
