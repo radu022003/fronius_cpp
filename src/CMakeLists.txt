@@ -8,12 +8,32 @@ set(HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/fronius.h)
 
 if(${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/arm-linux-gnueabi-g++")
 	#-lpthread MUST be at the end of the list otherwise linking problems will occur
-	set(LIB_TO_INCLUDE PocoJSON.a PocoNet.a PocoFoundation.a  yaml-cpp.a PocoUtil.a -lpthread )
+	set(LIB_TO_INCLUDE PocoJSON.a PocoNet.a PocoFoundation.a PocoData.a PocoDataSQLite.a yaml-cpp.a PocoUtil.a -lpthread )
 else()
 	set(LIB_TO_INCLUDE -lpthread -lPocoJSON -lPocoNet -lPocoFoundation  -lyaml-cpp -lPocoUtil)
 endif()
 
-add_executable(${BINARY} ${SOURCES} ${HEADER_FILES})
+SET(OBJS
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/sqlite3.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Binder.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Connector.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Extractor.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Notifier.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/SessionImpl.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/SQLiteException.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/SQLiteStatementImpl.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Utility.o
+  ${CMAKE_CURRENT_SOURCE_DIR}/../obj/Statement.o
+)
+
+
+add_executable(${BINARY} ${SOURCES} ${HEADER_FILES} ${OBJS})
+SET_SOURCE_FILES_PROPERTIES(
+  ${OBJS}
+  PROPERTIES
+  EXTERNAL_OBJECT true
+  GENERATED true
+)
 target_include_directories(${BINARY} PUBLIC ${PROJECT_SOURCE_DIR}/src/include)
 target_link_libraries(${BINARY} ${LIB_TO_INCLUDE})
 target_compile_features(${BINARY} PUBLIC cxx_std_14)
