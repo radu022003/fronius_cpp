@@ -17,7 +17,7 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(src src/include include)
+include_directories(src src/include include )
 link_directories(lib/poco lib/yaml "\$ORIGIN")
 add_subdirectory(src)
 
