@@ -1,4 +1,6 @@
 #include <sqlite_conn.h>
+#include <chrono>
+#include <ctime> 
 
 SqliteConn::SqliteConn(std::unique_ptr<Poco::Data::Session> session) : m_session(std::move(session))
 {
@@ -23,14 +25,33 @@ SqliteConn *SqliteConn::create(std::string const &fileName)
     return new SqliteConn(std::move(session));
 }
 
+const std::string SqliteConn::currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+
+    return buf;
+}
+
 void SqliteConn::insert(PowerFlow &data)
 {
     //Poco::Data::Session session("SQLite", "sample.db");
-    Poco::Timestamp ts;
-    Poco::DateTime dt(ts);
-    Poco::LocalDateTime ldt(dt);
-    std::string current_time = Poco::DateTimeFormatter::format(ldt, Poco::DateTimeFormat::SORTABLE_FORMAT);
+    cout << "prepare data for insertion" << endl;
+    //Poco::Timestamp ts;
+    //Poco::DateTime dt(ts);
+    //Poco::LocalDateTime ldt(dt);
+    //std::string current_time = Poco::DateTimeFormatter::format(ldt, Poco::DateTimeFormat::SORTABLE_FORMAT);
+    //auto now = std::chrono::system_clock::now();
+    //std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    
+    //std::string current_time{std::ctime(&now_time)};
+    std::string current_time{currentDateTime()};
     cout << current_time << endl;
+    data.dE_Total = 0.0;
     Statement insert(*m_session);
     insert << "INSERT INTO Fronius VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)",
         use(current_time),

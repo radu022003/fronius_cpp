@@ -18,7 +18,7 @@ private:
     /* data */
     std::unique_ptr<Poco::Data::Session> m_session;
     SqliteConn(std::unique_ptr<Poco::Data::Session> session);
-
+    const std::string currentDateTime();
 public:
     static SqliteConn *create(std::string const &fileName);
     void insert(PowerFlow &data);
