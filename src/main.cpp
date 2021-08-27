@@ -10,11 +10,15 @@ int main()
 	URI uri((*parentNode)["host"].as<std::string>());
 	session->setHost(uri.getHost());
 	session->setPort(uri.getPort());
+	cout << "create instance" << endl;
 	auto inverter = FroniusClient::create(parentNode, std::move(session));
+	cout << "get apiVersion" << endl;
 	inverter->getApiVersion();
 	while (true)
 	{
+		cout << "get FlowPowerData" << endl;
 		const auto &power = inverter->getFlowPowerData();
+		cout << "print FlowPowerData" << endl;
 		cout << power;
 		sleep(1);
 	}

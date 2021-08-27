@@ -42,10 +42,10 @@ else()
 		   COMMENT "stripping the binary"
 		   VERBATIM
 	)
-	add_custom_command(TARGET ${BINARY}
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BINARY}> ${BIN_DEST_FOLDER}
-		   COMMENT "copying the output binary to destination folder: ${BIN_DEST_FOLDER}"
-	)
+	#add_custom_command(TARGET ${BINARY}
+  #                 POST_BUILD
+  #                 COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BINARY}> ${BIN_DEST_FOLDER}
+	#	   COMMENT "copying the output binary to destination folder: ${BIN_DEST_FOLDER}"
+	#)
 endif()
 
