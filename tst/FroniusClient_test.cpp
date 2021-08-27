@@ -4,7 +4,6 @@
 #include <fronius.h>
 #include <fstream>
 #include "test_data.h"
-#include <sqlite_conn.h>
 
 using ::testing::NiceMock;
 using ::testing::Return;
@@ -173,36 +172,4 @@ TEST(test_Inverter2, get_api_version_from_inverter2)
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
     session.~__shared_ptr();
-}
-
-TEST(test_sqlite, create_table)
-{
-    //arrange
-    //act
-    //assert
-    auto db = SqliteConn::create("sample.db");
-    PowerFlow sampleData = {
-        5.9900000000000091,
-        -511.99000000000001,
-        941.60000000000002,
-        6758,
-        7604385.5,
-        1342638.2000000002};
-}
-
-TEST(test_sqlite, insert_values)
-{
-    //arrange
-    //act
-    //assert
-
-    PowerFlow sampleData = {
-        5.9900000000000091,
-        -511.99000000000001,
-        941.60000000000002,
-        6758,
-        7604385.5,
-        1342638.2000000002};
-    auto db = SqliteConn::create("sample2.db");
-    db->insert(sampleData);
 }

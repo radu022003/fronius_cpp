@@ -1,6 +1,5 @@
 #include <fronius.h>
 #include <read_config.h>
-#include <sqlite_conn.h>
 
 int main()
 {
@@ -13,13 +12,11 @@ int main()
 	session->setPort(uri.getPort());
 	auto inverter = FroniusClient::create(parentNode, std::move(session));
 	inverter->getApiVersion();
-	auto db = SqliteConn::create("fronius.db");
 	while (true)
 	{
 		const auto &power = inverter->getFlowPowerData();
 		cout << power;
 		sleep(1);
-		db->insert(const_cast<PowerFlow &>(power));
 	}
 
 	return 0;
