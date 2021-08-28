@@ -9,7 +9,7 @@ SqliteConn::SqliteConn(std::unique_ptr<Poco::Data::Session> session) : m_session
 
     // (re)create table
     *m_session
-        << "CREATE TABLE IF NOT EXISTS Fronius (id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, Load REAL, Grid REAL, PV REAL, Day REAL, Total REAL, Year REAL)",
+        << "CREATE TABLE IF NOT EXISTS Fronius (id INTEGER PRIMARY KEY AUTOINCREMENT, time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, Load REAL, Grid REAL, PV REAL, Day REAL, Total REAL, Year REAL)",
         now;
 }
 
@@ -49,12 +49,12 @@ void SqliteConn::insert(PowerFlow &data)
     //std::time_t now_time = std::chrono::system_clock::to_time_t(now);
     
     //std::string current_time{std::ctime(&now_time)};
-    std::string current_time{currentDateTime()};
-    cout << current_time << endl;
+    //std::string current_time{currentDateTime()};
+    //cout << current_time << endl;
     data.dE_Total = 0.0;
     Statement insert(*m_session);
-    insert << "INSERT INTO Fronius VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)",
-        use(current_time),
+    insert << "INSERT OR REPLACE INTO Fronius VALUES(NULL, NULL, ?, ?, ?, ?, ?, ?)",
+        //use(current_time),
         use(data.dP_Load),
         use(data.dP_Grid),
         use(data.dP_PV),
