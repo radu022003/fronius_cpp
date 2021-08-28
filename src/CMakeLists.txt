@@ -26,6 +26,16 @@ SET(OBJS
 )
 
 
+
+#if not cross compile, than create the static library for gtest
+#else strip the output binary and copy it to destination folder
+if(NOT ${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/arm-linux-gnueabi-g++")
+	add_library(${BINARY}_lib STATIC ${SOURCES})
+	add_compile_options(-std=c++14 -Wall -Wextra -g)
+	#target_compile_features(${BINARY} PUBLIC cxx_std_14)
+	#target_link_libraries(${BINARY} ${LIB_TO_INCLUDE})
+	#target_include_directories(${BINARY} PUBLIC ${PROJECT_SOURCE_DIR}/src/include)
+else()
 add_executable(${BINARY} ${SOURCES} ${HEADER_FILES} ${OBJS})
 SET_SOURCE_FILES_PROPERTIES(
   ${OBJS}
@@ -46,16 +56,7 @@ message(STATUS "libs: ${libs}")
 message(STATUS "compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "linker: ${CMAKE_LINKER}")
 
-#if not cross compile, than create the static library for gtest
-#else strip the output binary and copy it to destination folder
-if(NOT ${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/arm-linux-gnueabi-g++")
-	add_library(${BINARY}_lib STATIC ${SOURCES})
-	add_compile_options(-std=c++14 -Wall -Wextra -g)
-	target_compile_features(${BINARY} PUBLIC cxx_std_14)
-	target_link_libraries(${BINARY} ${LIB_TO_INCLUDE})
-	target_include_directories(${BINARY} PUBLIC ${PROJECT_SOURCE_DIR}/src/include)
-else()
-	add_custom_command(TARGET ${BINARY}
+  add_custom_command(TARGET ${BINARY}
                    POST_BUILD
                    COMMAND  /usr/bin/arm-linux-gnueabi-strip ${PROJECT_NAME}
 		   COMMENT "stripping the binary"

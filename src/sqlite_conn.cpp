@@ -1,4 +1,7 @@
 #include <sqlite_conn.h>
+#include <Poco/Data/SQLite/SQLiteException.h>
+#include <chrono>
+#include <ctime>
 
 SqliteConn::SqliteConn(std::unique_ptr<Poco::Data::Session> session) : m_session(std::move(session))
 {
@@ -7,7 +10,7 @@ SqliteConn::SqliteConn(std::unique_ptr<Poco::Data::Session> session) : m_session
 
     // (re)create table
     *m_session
-        << "CREATE TABLE IF NOT EXISTS Fronius (id INTEGER PRIMARY KEY AUTOINCREMENT, time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, Load REAL, Grid REAL, PV REAL, Day REAL, Total REAL, Year REAL)",
+        << "CREATE TABLE IF NOT EXISTS Fronius (id INTEGER PRIMARY KEY AUTOINCREMENT, time DATETIME DEFAULT CURRENT_TIMESTAMP, Load REAL, Grid REAL, PV REAL, Day INTEGER, Total REAL, Year REAL)",
         now;
 }
 
@@ -23,22 +26,24 @@ SqliteConn *SqliteConn::create(std::string const &fileName)
     return new SqliteConn(std::move(session));
 }
 
+
 void SqliteConn::insert(PowerFlow &data)
 {
-    //Poco::Data::Session session("SQLite", "sample.db");
-    Poco::Timestamp ts;
-    Poco::DateTime dt(ts);
-    Poco::LocalDateTime ldt(dt);
-    std::string current_time = Poco::DateTimeFormatter::format(ldt, Poco::DateTimeFormat::SORTABLE_FORMAT);
-    cout << current_time << endl;
     Statement insert(*m_session);
-    insert << "INSERT INTO Fronius VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)",
-        use(current_time),
-        use(data.dP_Load),
-        use(data.dP_Grid),
-        use(data.dP_PV),
-        use(data.iE_Day),
-        use(data.dE_Total),
-        use(data.dE_Year),
-        now;
+    try
+    {
+        insert << "INSERT OR REPLACE INTO Fronius VALUES(NULL, NULL, ?, ?, ?, ?, ?, ?)",
+            use(data.dP_Load),
+            use(data.dP_Grid),
+            use(data.dP_PV),
+            use(data.iE_Day),
+            use(data.dE_Total),
+            use(data.dE_Year),
+            now;
+    }
+    catch (const Poco::Data::SQLite::InvalidSQLStatementException &e)
+    {
+
+        std::cerr << e.what() << '\n';
+    }
 }
