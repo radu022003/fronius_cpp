@@ -119,6 +119,14 @@ TEST(test_Inverter2, get_api_version_from_inverter)
     EXPECT_NE(inverter, nullptr);
 
     std::ostream &os = std::cout;
+
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(GetAPIVersion));
+    inverter->getApiVersion();
+
+    EXPECT_EQ(inverter->getBaseURL(), "/solar_api/v1/");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 1);
+
     EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
     EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_GetPowerFlowRealtimeData));
 

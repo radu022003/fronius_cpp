@@ -56,6 +56,7 @@ void FroniusClient::getPowerFlow()
 {
     m_uri.setPath(m_baseURL + "GetPowerFlowRealtimeData.fcgi");
     string path(m_uri.getPathAndQuery());
+    cout << path << endl;
     // send request
     HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
     m_session->sendRequest(req);
@@ -67,7 +68,7 @@ void FroniusClient::getPowerFlow()
 
     std::string response{};
     StreamCopier::copyToString(is, response);
-
+    std::cout << "powerFlow realtime data response: " << response << std::endl;
     auto d = std::make_unique<Document>();
 
     d->Parse(response.c_str());
