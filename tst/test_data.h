@@ -1,6 +1,14 @@
 #pragma once
 #include <sstream>
 
+std::istringstream GetAPIVersion(R"!(
+{
+    "APIVersion" : 1,
+    "BaseURL" : "/solar_api/v1/",
+    "CompatibilityRange" : "1.5-18"
+}
+)!");
+
 std::istringstream GetRealTimeFlowDataFull_OK(R"!(
 {
     "Body": {
