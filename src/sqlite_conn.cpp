@@ -38,8 +38,6 @@ void SqliteConn::insert(PowerFlow &data)
 {
     //Poco::Data::Session session("SQLite", "sample.db");
     cout << "prepare data for insertion" << endl;
-
-    data.dE_Total = 0.0;
     Statement insert(*m_session);
     insert << "INSERT OR REPLACE INTO Fronius VALUES(NULL, NULL, ?, ?, ?, ?, ?, ?)",
         use(data.dP_Load),

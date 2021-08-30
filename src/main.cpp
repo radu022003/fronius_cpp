@@ -18,6 +18,7 @@ int main()
 	auto db = SqliteConn::create("fronius.db");
 	while (true)
 	{
+		inverter->getPowerFlow();
 		cout << "get FlowPowerData" << endl;
 		const auto &power = inverter->getFlowPowerData();
 		cout << "print FlowPowerData" << endl;
