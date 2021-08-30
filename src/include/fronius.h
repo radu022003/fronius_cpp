@@ -23,8 +23,9 @@ using namespace Poco;
 using namespace std;
 using namespace rapidjson;
 
-struct PowerFlow
+class PowerFlow
 {
+public:
     double dP_Load;
     double dP_Grid;
     double dP_PV;
@@ -34,15 +35,17 @@ struct PowerFlow
 
     friend ostream &operator<<(ostream &output, const PowerFlow &P)
     {
-        output << "Load : " << P.dP_Load << endl;
-        output << "Grid : " << P.dP_Grid << endl;
-        output << "PV : " << P.dP_PV << endl;
-        output << "Day : " << P.iE_Day << endl;
-        output << "Year : " << P.dE_Year << endl;
-        output << "Total : " << P.dE_Total << endl;
+        output << "Load : " << std::to_string(P.dP_Load) << endl;
+        output << "Grid : " << std::to_string(P.dP_Grid) << endl;
+        output << "PV : " << std::to_string(P.dP_PV) << endl;
+        output << "Day : " << std::to_string(P.iE_Day) << endl;
+        output << "Year : " << std::to_string(P.dE_Year) << endl;
+        output << "Total : " << std::to_string(P.dE_Total) << endl;
         return output;
     }
 };
+
+
 
 class FroniusClient
 {
