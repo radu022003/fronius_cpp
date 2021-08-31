@@ -79,12 +79,13 @@ void FroniusClient::getPowerFlow()
         return;
     }
 
-    assert((*d)["Body"]["Data"]["Site"].HasMember("P_Load"));
-    assert((*d)["Body"]["Data"]["Site"]["P_Load"].IsDouble());
-    m_powerFlow.dP_Load = (*d)["Body"]["Data"]["Site"]["P_Load"].GetDouble();
+    //assert((*d)["Body"]["Data"]["Site"].HasMember("P_Load"));
+    //assert((*d)["Body"]["Data"]["Site"]["P_Load"].IsDouble());
+    //m_powerFlow.dP_Load = (*d)["Body"]["Data"]["Site"]["P_Load"].GetDouble();
 
     if (Value *type1 = GetValueByPointer((*d), "/Body/Data/Site"))
     {
+        m_powerFlow.dP_Load = (*type1)["P_Load"].GetDouble();
         m_powerFlow.dP_Grid = (*type1)["P_Grid"].GetDouble();
         m_powerFlow.dP_PV = (*type1)["P_PV"].GetDouble();
         m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
