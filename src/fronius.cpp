@@ -92,3 +92,42 @@ void FroniusClient::getPowerFlow()
         m_powerFlow.dE_Year = (*type1)["E_Year"].GetDouble();
     }
 }
+
+void FroniusClient::getInverterInfo()
+{
+    m_uri.setPath(m_baseURL + "GetInverterInfo.cgi");
+    string path(m_uri.getPathAndQuery());
+    cout << path << endl;
+    // send request
+    HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+    m_session->sendRequest(req);
+    // get response
+    HTTPResponse res;
+    // print response
+    istream &is = m_session->receiveResponse(res);
+    cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
+
+    std::string response{};
+    StreamCopier::copyToString(is, response);
+    std::cout << "powerFlow realtime data response: " << response << std::endl;
+    auto d = std::make_unique<Document>();
+
+    d->Parse(response.c_str());
+    if (d->Parse(response.c_str()).HasParseError())
+    {
+        cout << "parsing error: " << GetParseError_En(d->GetParseError()) << endl;
+        cout << "error parsing response" << endl;
+        return;
+    }
+
+    if (Value *type1 = GetValueByPointer((*d), "/Body/Data/1"))
+    {
+        m_inverterInfo.m_name = (*type1)["CustomName"].GetString();
+        m_inverterInfo.m_deviceType = (*type1)["DT"].GetInt();
+        m_inverterInfo.m_errorCode = (*type1)["ErrorCode"].GetInt();
+        m_inverterInfo.m_PVPower = (*type1)["PVPower"].GetInt();
+        m_inverterInfo.m_show = (*type1)["Show"].GetInt();
+        m_inverterInfo.m_statusCode = (*type1)["StatusCode"].GetInt();
+        m_inverterInfo.m_uniqueId = (*type1)["UniqueID"].GetString();
+    }
+}

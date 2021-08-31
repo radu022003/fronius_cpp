@@ -289,3 +289,40 @@ std::istringstream FroniusHybridSys_InverterInfo(R"!(
    }
 }
 )!");
+
+std::istringstream FroniusHybridSys_GetActiveDeviceInfo(R"!(
+{
+	"Body": {
+		"Data": {
+			"1": {
+				"DT": 1,
+				"Serial": "29091000975090007"
+			},
+			"Meter": {
+				"0": {
+					"DT": -1,
+					"Serial": "18142251"
+				}
+			},
+			"Ohmpilot": {
+				"0": {
+					"DT": -1,
+					"Serial": "28136344"
+				}
+			},
+			"Storage": {}
+		}
+	},
+	"Head": {
+		"RequestArguments": {
+			"DeviceClass": "System"
+		},
+		"Status": {
+			"Code": 0,
+			"Reason": "",
+			"UserMessage": ""
+		},
+		"Timestamp": "2019 -08 -28 T08 :59:41+00:00"
+	}
+}
+)!");

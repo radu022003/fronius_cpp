@@ -181,3 +181,41 @@ TEST(test_Inverter2, get_api_version_from_inverter2)
     //delete shared pointer
     session.~__shared_ptr();
 }
+
+TEST(test_Inverter2, get_inverterInfo)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::ostream &os = std::cout;
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_InverterInfo));
+
+    inverter->getInverterInfo();
+
+    const auto &inverterData = inverter->getInverterInfoData();
+
+    //EXPECT_EQ(inverterData.m_name, "Primo 3.0-1 (1)");
+    EXPECT_EQ(inverterData.m_name, "&#80;&#114;&#105;&#109;&#111;&#32;&#51;&#46;&#48;&#45;&#49;&#32;&#40;&#49;&#41;");
+    EXPECT_EQ(inverterData.m_deviceType, 81);
+    EXPECT_EQ(inverterData.m_errorCode, 0);
+    EXPECT_EQ(inverterData.m_show, 1);
+    EXPECT_EQ(inverterData.m_statusCode, static_cast<int64_t>(InverterInfo::Status::Running));
+    EXPECT_EQ(inverterData.m_uniqueId, "1148686");
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
