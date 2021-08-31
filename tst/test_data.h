@@ -165,6 +165,49 @@ std::istringstream FroniusHybridSys_GetPowerFlowRealtimeData2(R"!(
 }
 )!");
 
+
+std::istringstream FroniusHybridSys_GetPowerFlowRealtimeData_integer_values(R"!(
+{
+   "Body" : {
+      "Data" : {
+         "Inverters" : {
+            "1" : {
+               "DT" : 81,
+               "E_Day" : 15039,
+               "E_Total" : 2777190,
+               "E_Year" : 2777198,
+               "P" : 1033
+            }
+         },
+         "Site" : {
+            "E_Day" : 15039,
+            "E_Total" : 2777190,
+            "E_Year" : 2777198,
+            "Meter_Location" : "grid",
+            "Mode" : "meter",
+            "P_Akku" : null,
+            "P_Grid" : -975,
+            "P_Load" : -57,
+            "P_PV" : 1033,
+            "rel_Autonomy" : 100,
+            "rel_SelfConsumption" : 5.5808325266214887
+         },
+         "Version" : "12"
+      }
+   },
+   "Head" : {
+      "RequestArguments" : {},
+      "Status" : {
+         "Code" : 0,
+         "Reason" : "",
+         "UserMessage" : ""
+      },
+      "Timestamp" : "2021-08-25T17:13:09+03:00"
+   }
+}
+)!");
+
+
 std::istringstream FroniusHybridSys_InverterRealtimeData(R"!(
 {
    "Body" : {
