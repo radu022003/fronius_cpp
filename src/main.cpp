@@ -15,6 +15,8 @@ int main()
 	auto inverter = FroniusClient::create(parentNode, std::move(session));
 	cout << "get apiVersion" << endl;
 	inverter->getApiVersion();
+	inverter->getInverterInfo();
+	cout << inverter->getInverterInfoData() << endl;
 	auto db = SqliteConn::create("fronius.db");
 	while (true)
 	{

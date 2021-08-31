@@ -207,15 +207,24 @@ TEST(test_Inverter2, get_inverterInfo)
 
     const auto &inverterData = inverter->getInverterInfoData();
 
-    //EXPECT_EQ(inverterData.m_name, "Primo 3.0-1 (1)");
-    EXPECT_EQ(inverterData.m_name, "&#80;&#114;&#105;&#109;&#111;&#32;&#51;&#46;&#48;&#45;&#49;&#32;&#40;&#49;&#41;");
+    std::cout << inverterData << endl;
+    EXPECT_EQ(inverterData.m_name, "Primo 3.0-1 (1)");
+    //EXPECT_EQ(inverterData.m_name, "&#80;&#114;&#105;&#109;&#111;&#32;&#51;&#46;&#48;&#45;&#49;&#32;&#40;&#49;&#41;");
     EXPECT_EQ(inverterData.m_deviceType, 81);
     EXPECT_EQ(inverterData.m_errorCode, 0);
     EXPECT_EQ(inverterData.m_show, 1);
     EXPECT_EQ(inverterData.m_statusCode, static_cast<int64_t>(InverterInfo::Status::Running));
+    EXPECT_EQ(inverterData.m_statusCodeText, "Running");
     EXPECT_EQ(inverterData.m_uniqueId, "1148686");
 
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
     session.~__shared_ptr();
+}
+
+TEST(test_html_converter, convert_html_text)
+{
+    auto inverterInfo = new InverterInfo();
+    std::string input{"&#80;&#114;&#105;&#109;&#111;&#32;&#51;&#46;&#48;&#45;&#49;&#32;&#40;&#49;&#41;"};
+    EXPECT_EQ(inverterInfo->convertHtmlToString(input), "Primo 3.0-1 (1)");
 }

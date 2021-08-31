@@ -9,6 +9,7 @@
 #include <Poco/Exception.h>
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 #include <rapidjson/rapidjson.h>
@@ -48,9 +49,7 @@ public:
 class InverterInfo
 {
 
-    
-
-    std::map<int, std::string> statusMap{
+    std::map<const int, const std::string> m_statusMap{
         {0, "Startup"},
         {1, "Startup"},
         {2, "Startup"},
@@ -69,7 +68,6 @@ class InverterInfo
     };
 
 public:
-
     enum class Status
     {
         Startup,
@@ -88,6 +86,7 @@ public:
     unsigned int m_show{};
     std::string m_uniqueId;
     int64_t m_statusCode{};
+    std::string m_statusCodeText{};
     int64_t m_errorCode{};
     int64_t m_PVPower{};
 
@@ -98,10 +97,44 @@ public:
         output << "Show: " << I.m_show << endl;
         output << "UniqueId: " << I.m_uniqueId << endl;
         output << "StatusCode: " << I.m_statusCode << endl;
+        output << "StatusCodeText: " << I.getStatusText(I.m_statusCode) << endl;
         output << "ErrorCode: " << I.m_errorCode << endl;
         output << "PV Power: " << I.m_PVPower << endl;
         return output;
     }
+
+    const std::string &getStatusText(const int64_t &status) const
+    {
+        return this->m_statusMap.at(status);
+    };
+
+    const std::string convertHtmlToString(std::string const &input)
+    {
+        std::string output{};
+        stringstream ss{input};
+        std::string tmp{};
+        while (getline(ss, tmp, ';'))
+        {
+            output += (char)std::stoi(tmp.substr(2));
+        }
+        return output;
+    }
+
+    /* const std::string convertHtmlToString(std::string const &input)
+    {
+        std::string output{};
+        auto it = input.begin();
+        auto it_pre_delim = std::find(it, input.end(), '#');
+        auto it_post_delim = std::find(it, input.end(), ';');
+        for (; it_post_delim != input.end(); )
+        {
+            output += (char)std::stoi(input.substr(std::distance(input.begin(), it_pre_delim + 1), std::distance(it_pre_delim + 1, it_post_delim)));
+            it = it_post_delim + 1;
+            it_pre_delim = std::find(it, input.end(), '#');
+            it_post_delim = std::find(it, input.end(), ';');
+        }
+        return output;
+    } */
 };
 
 class FroniusClient
@@ -150,6 +183,8 @@ public:
 
     const InverterInfo &getInverterInfoData()
     {
+        m_inverterInfo.m_name = m_inverterInfo.convertHtmlToString(m_inverterInfo.m_name);
+        m_inverterInfo.m_statusCodeText = m_inverterInfo.getStatusText(m_inverterInfo.m_statusCode);
         return m_inverterInfo;
     }
 
