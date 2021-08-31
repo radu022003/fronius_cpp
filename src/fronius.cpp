@@ -79,18 +79,59 @@ void FroniusClient::getPowerFlow()
         return;
     }
 
-    //assert((*d)["Body"]["Data"]["Site"].HasMember("P_Load"));
-    //assert((*d)["Body"]["Data"]["Site"]["P_Load"].IsDouble());
-    //m_powerFlow.dP_Load = (*d)["Body"]["Data"]["Site"]["P_Load"].GetDouble();
-
     if (Value *type1 = GetValueByPointer((*d), "/Body/Data/Site"))
     {
-        m_powerFlow.dP_Load = (*type1)["P_Load"].GetDouble();
-        m_powerFlow.dP_Grid = (*type1)["P_Grid"].GetDouble();
-        m_powerFlow.dP_PV = (*type1)["P_PV"].GetDouble();
-        m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
-        m_powerFlow.dE_Total = (*type1)["E_Total"].GetDouble();
-        m_powerFlow.dE_Year = (*type1)["E_Year"].GetDouble();
+        if (!(*type1)["P_Load"].IsNull())
+        {
+            m_powerFlow.dP_Load = (*type1)["P_Load"].GetDouble();
+        }
+        else
+        {
+            m_powerFlow.dP_Load = 0.0;
+        }
+
+        if (!(*type1)["P_Grid"].IsNull())
+        {
+            m_powerFlow.dP_Grid = (*type1)["P_Grid"].GetDouble();
+        }
+        else
+        {
+            m_powerFlow.dP_Grid = 0.0;
+        }
+
+        if (!(*type1)["P_PV"].IsNull())
+        {
+            m_powerFlow.dP_PV = (*type1)["P_PV"].GetDouble();
+        }
+        else
+        {
+            m_powerFlow.dP_PV = 0.0;
+        }
+
+        if (!(*type1)["E_Day"].IsNull())
+        {
+            m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
+        }
+        else
+        {
+            m_powerFlow.iE_Day = 0;
+        }
+        if (!(*type1)["E_Total"].IsNull())
+        {
+            m_powerFlow.dE_Total = (*type1)["E_Total"].GetDouble();
+        }
+        else
+        {
+            m_powerFlow.dE_Total = 0.0;
+        }
+        if (!(*type1)["E_Year"].IsNull())
+        {
+            m_powerFlow.dE_Year = (*type1)["E_Year"].GetDouble();
+        }
+        else
+        {
+            m_powerFlow.dE_Year = 0.0;
+        }
     }
 }
 
