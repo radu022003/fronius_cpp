@@ -90,7 +90,7 @@ TEST(test_Inverter, get_api_version_from_inverter)
     EXPECT_EQ(inverter->getBaseURL(), "");
     EXPECT_EQ(inverter->getApiVersionNumber(), 0);
 
-    inverter->getApiVersion();
+    EXPECT_TRUE(inverter->getApiVersion());
 
     EXPECT_EQ(inverter->getBaseURL(), "/solar_api/v1/");
     EXPECT_EQ(inverter->getApiVersionNumber(), 1);
@@ -121,7 +121,7 @@ TEST(test_Inverter2, get_api_version_from_inverter)
 
     EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
     EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(GetAPIVersion));
-    inverter->getApiVersion();
+    EXPECT_TRUE(inverter->getApiVersion());
 
     EXPECT_EQ(inverter->getBaseURL(), "/solar_api/v1/");
     EXPECT_EQ(inverter->getApiVersionNumber(), 1);

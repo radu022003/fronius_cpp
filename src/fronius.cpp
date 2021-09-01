@@ -20,36 +20,47 @@ FroniusClient *FroniusClient::create(std::shared_ptr<YAML::Node> parentNode, std
     return new FroniusClient(std::move(session));
 }
 
-void FroniusClient::getApiVersion()
+bool FroniusClient::getApiVersion()
 {
-    m_uri.setPath("/solar_api/GetAPIVersion.cgi");
-    string path(m_uri.getPathAndQuery());
-    // send request
-    HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-    m_session->sendRequest(req);
-    // get response
-    HTTPResponse res;
-    // print response
-    istream &is = m_session->receiveResponse(res);
-    cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
-
-    std::string response{};
-    StreamCopier::copyToString(is, response);
-
-    Document d;
-
-    d.Parse(response.c_str());
-    if (d.Parse(response.c_str()).HasParseError())
+    bool result{false};
+    try
     {
-        cout << "error parsing response" << endl;
-        return;
+        m_uri.setPath("/solar_api/GetAPIVersion.cgi");
+        string path(m_uri.getPathAndQuery());
+        // send request
+        HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+        m_session->sendRequest(req);
+        // get response
+        HTTPResponse res;
+        // print response
+        istream &is = m_session->receiveResponse(res);
+        std::cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
+
+        std::string response{};
+        StreamCopier::copyToString(is, response);
+
+        Document d;
+
+        d.Parse(response.c_str());
+        if (d.Parse(response.c_str()).HasParseError())
+        {
+            std::cout << "error parsing response" << endl;
+            return false;
+        }
+        assert(d.HasMember("BaseURL"));
+        assert(d["BaseURL"].IsString());
+        m_baseURL = d["BaseURL"].GetString();
+        assert(d.HasMember("APIVersion"));
+        assert(d["APIVersion"].IsInt());
+        m_apiVersion = d["APIVersion"].GetInt();
+        result = true;
     }
-    assert(d.HasMember("BaseURL"));
-    assert(d["BaseURL"].IsString());
-    m_baseURL = d["BaseURL"].GetString();
-    assert(d.HasMember("APIVersion"));
-    assert(d["APIVersion"].IsInt());
-    m_apiVersion = d["APIVersion"].GetInt();
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+        result = false;
+    }
+    return result;
 }
 
 void FroniusClient::getPowerFlow()
