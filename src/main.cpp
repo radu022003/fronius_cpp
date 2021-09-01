@@ -23,13 +23,15 @@ int main()
 	auto db = SqliteConn::create("fronius.db");
 	while (true)
 	{
-		inverter->getPowerFlow();
-		cout << "get FlowPowerData" << endl;
-		const auto &power = inverter->getFlowPowerData();
-		cout << "print FlowPowerData" << endl;
-		cout << power;
-		sleep(1);
-		db->insert(const_cast<PowerFlow &>(power));
+		if (inverter->getPowerFlow())
+		{
+			cout << "get FlowPowerData" << endl;
+			const auto &power = inverter->getFlowPowerData();
+			cout << "print FlowPowerData" << endl;
+			cout << power;
+			sleep(1);
+			db->insert(const_cast<PowerFlow &>(power));
+		}
 	}
 
 	return 0;
