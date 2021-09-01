@@ -100,6 +100,53 @@ TEST(test_Inverter, get_api_version_from_inverter)
     session.~__shared_ptr();
 }
 
+ACTION(getApiVersion_connectionRefused)
+{
+    throw ConnectionRefusedException();
+}
+
+TEST(test_Inverter, get_api_version_from_inverter_connection_refused)
+{
+
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::istringstream str(R"!(
+{
+    "APIVersion" : 1,
+    "BaseURL" : "/solar_api/v1/",
+    "CompatibilityRange" : "1.5-18"
+}
+    )!");
+    std::ostream &os = std::cout;
+    EXPECT_CALL(*session, sendRequest).WillOnce(getApiVersion_connectionRefused());
+
+    EXPECT_CALL(*session, receiveResponse).Times(0);
+    EXPECT_EQ(inverter->getBaseURL(), "");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 0);
+
+    EXPECT_FALSE(inverter->getApiVersion());
+
+    EXPECT_EQ(inverter->getBaseURL(), "");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 0);
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
+
 TEST(test_Inverter2, get_api_version_from_inverter)
 {
     //arrange

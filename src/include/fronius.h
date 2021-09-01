@@ -6,6 +6,7 @@
 #include <Poco/StreamCopier.h>
 #include <Poco/Path.h>
 #include <Poco/URI.h>
+#include <Poco/Net/NetException.h>
 #include <Poco/Exception.h>
 #include <iostream>
 #include <string>
