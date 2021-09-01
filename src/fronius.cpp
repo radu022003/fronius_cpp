@@ -45,6 +45,7 @@ bool FroniusClient::getApiVersion()
         if (d.Parse(response.c_str()).HasParseError())
         {
             std::cout << "error parsing response" << endl;
+            std::cout << response << endl;
             return false;
         }
         assert(d.HasMember("BaseURL"));
@@ -63,87 +64,85 @@ bool FroniusClient::getApiVersion()
     return result;
 }
 
-void FroniusClient::getPowerFlow()
+bool FroniusClient::getPowerFlow()
 {
-    m_uri.setPath(m_baseURL + "GetPowerFlowRealtimeData.fcgi");
-    string path(m_uri.getPathAndQuery());
-    cout << path << endl;
-    // send request
-    HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-    m_session->sendRequest(req);
-    // get response
-    HTTPResponse res;
-    // print response
-    istream &is = m_session->receiveResponse(res);
-    cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
-
-    std::string response{};
-    StreamCopier::copyToString(is, response);
-    std::cout << "powerFlow realtime data response: " << response << std::endl;
-    auto d = std::make_unique<Document>();
-
-    d->Parse(response.c_str());
-    if (d->Parse(response.c_str()).HasParseError())
+    bool result{false};
+    try
     {
-        cout << "parsing error: " << GetParseError_En(d->GetParseError()) << endl;
-        cout << "error parsing response" << endl;
-        return;
-    }
+        m_uri.setPath(m_baseURL + "GetPowerFlowRealtimeData.fcgi");
+        string path(m_uri.getPathAndQuery());
+        cout << path << endl;
+        // send request
+        HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+        m_session->sendRequest(req);
+        // get response
+        HTTPResponse res;
+        // print response
+        istream &is = m_session->receiveResponse(res);
+        cout << "response: " << res.getStatus() << " " << res.getReason() << endl;
 
-    if (Value *type1 = GetValueByPointer((*d), "/Body/Data/Site"))
+        std::string response{};
+        StreamCopier::copyToString(is, response);
+        std::cout << "powerFlow realtime data response: " << response << std::endl;
+        auto d = std::make_unique<Document>();
+
+        d->Parse(response.c_str());
+        if (d->Parse(response.c_str()).HasParseError())
+        {
+            cout << "parsing error: " << GetParseError_En(d->GetParseError()) << endl;
+            cout << "error parsing response" << endl;
+            return false;
+        }
+        m_powerFlow = {
+            0.0,
+            0.0,
+            0.0,
+            0,
+            0.0,
+            0.0,
+        };
+
+        if (Value *type1 = GetValueByPointer((*d), "/Body/Data/Site"))
+        {
+            std::cout << "getting data from json" << std::endl;
+            if (!(*type1)["P_Load"].IsNull())
+            {
+                m_powerFlow.dP_Load = (*type1)["P_Load"].GetDouble();
+            }
+
+            if (!(*type1)["P_Grid"].IsNull())
+            {
+                m_powerFlow.dP_Grid = (*type1)["P_Grid"].GetDouble();
+            }
+
+            if (!(*type1)["P_PV"].IsNull())
+            {
+                m_powerFlow.dP_PV = (*type1)["P_PV"].GetDouble();
+            }
+
+            if (!(*type1)["E_Day"].IsNull())
+            {
+                m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
+            }
+
+            if (!(*type1)["E_Total"].IsNull())
+            {
+                m_powerFlow.dE_Total = (*type1)["E_Total"].GetDouble();
+            }
+
+            if (!(*type1)["E_Year"].IsNull())
+            {
+                m_powerFlow.dE_Year = (*type1)["E_Year"].GetDouble();
+            }
+        }
+        result = true;
+    }
+    catch (const std::exception &e)
     {
-        if (!(*type1)["P_Load"].IsNull())
-        {
-            m_powerFlow.dP_Load = (*type1)["P_Load"].GetDouble();
-        }
-        else
-        {
-            m_powerFlow.dP_Load = 0.0;
-        }
-
-        if (!(*type1)["P_Grid"].IsNull())
-        {
-            m_powerFlow.dP_Grid = (*type1)["P_Grid"].GetDouble();
-        }
-        else
-        {
-            m_powerFlow.dP_Grid = 0.0;
-        }
-
-        if (!(*type1)["P_PV"].IsNull())
-        {
-            m_powerFlow.dP_PV = (*type1)["P_PV"].GetDouble();
-        }
-        else
-        {
-            m_powerFlow.dP_PV = 0.0;
-        }
-
-        if (!(*type1)["E_Day"].IsNull())
-        {
-            m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
-        }
-        else
-        {
-            m_powerFlow.iE_Day = 0;
-        }
-        if (!(*type1)["E_Total"].IsNull())
-        {
-            m_powerFlow.dE_Total = (*type1)["E_Total"].GetDouble();
-        }
-        else
-        {
-            m_powerFlow.dE_Total = 0.0;
-        }
-        if (!(*type1)["E_Year"].IsNull())
-        {
-            m_powerFlow.dE_Year = (*type1)["E_Year"].GetDouble();
-        }
-        else
-        {
-            m_powerFlow.dE_Year = 0.0;
-        }
+        std::cerr << "exception during GetPowerFlowRealtimeData: " << e.what() << '\n';
+        result = false;
     }
+    return result;
 }
 
 void FroniusClient::getInverterInfo()

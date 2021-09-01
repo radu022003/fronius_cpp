@@ -156,7 +156,7 @@ private:
 public:
     static FroniusClient *create(std::shared_ptr<YAML::Node> parentNode, std::shared_ptr<HTTPClientSession> session);
     bool getApiVersion();
-    void getPowerFlow();
+    bool getPowerFlow();
     void getInverterInfo();
     const std::string getHost()
     {

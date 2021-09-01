@@ -213,7 +213,7 @@ TEST(test_Inverter2, get_api_version_from_inverter2)
     EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
     EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_GetPowerFlowRealtimeData2));
 
-    inverter->getPowerFlow();
+    EXPECT_TRUE(inverter->getPowerFlow());
 
     const auto &power = inverter->getFlowPowerData();
 
@@ -223,6 +223,59 @@ TEST(test_Inverter2, get_api_version_from_inverter2)
     EXPECT_EQ(power.iE_Day, 15039);
     EXPECT_DOUBLE_EQ(power.dE_Total, 2777190);
     EXPECT_DOUBLE_EQ(power.dE_Year, 2777198.75);
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
+
+TEST(test_Inverter2, get_powerFlow_connection_refused)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::ostream &os = std::cout;
+
+    std::istringstream str(R"!(
+{
+    "APIVersion" : 1,
+    "BaseURL" : "/solar_api/v1/",
+    "CompatibilityRange" : "1.5-18"
+}
+    )!");
+
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(str));
+    EXPECT_TRUE(inverter->getApiVersion());
+
+    EXPECT_EQ(inverter->getBaseURL(), "/solar_api/v1/");
+    EXPECT_EQ(inverter->getApiVersionNumber(), 1);
+
+    EXPECT_CALL(*session, sendRequest).WillOnce(getApiVersion_connectionRefused());
+    EXPECT_CALL(*session, receiveResponse).Times(0);
+
+    EXPECT_FALSE(inverter->getPowerFlow());
+
+    const auto &power = inverter->getFlowPowerData();
+
+    EXPECT_FLOAT_EQ(power.dP_Load, 0.0);
+    EXPECT_FLOAT_EQ(power.dP_Grid, 0.0);
+    EXPECT_FLOAT_EQ(power.dP_PV, 0.0);
+    EXPECT_EQ(power.iE_Day, 0);
+    EXPECT_FLOAT_EQ(power.dE_Total, 0.0);
+    EXPECT_FLOAT_EQ(power.dE_Year, 0.0);
 
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
