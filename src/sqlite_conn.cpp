@@ -43,7 +43,7 @@ void SqliteConn::insert(PowerFlow &data)
         use(data.dP_Load),
         use(data.dP_Grid),
         use(data.dP_PV),
-        use(data.iE_Day),
+        use(data.dE_Day),
         use(data.dE_Total),
         use(data.dE_Year),
         now;

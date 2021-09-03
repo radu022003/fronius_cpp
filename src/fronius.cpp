@@ -122,7 +122,7 @@ bool FroniusClient::getPowerFlow()
 
             if (!(*type1)["E_Day"].IsNull())
             {
-                m_powerFlow.iE_Day = (*type1)["E_Day"].GetInt();
+                m_powerFlow.dE_Day = (*type1)["E_Day"].GetDouble();
             }
 
             if (!(*type1)["E_Total"].IsNull())

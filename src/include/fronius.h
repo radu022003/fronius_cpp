@@ -31,7 +31,7 @@ public:
     double dP_Load;
     double dP_Grid;
     double dP_PV;
-    int iE_Day;
+    double dE_Day;
     double dE_Total;
     double dE_Year;
 
@@ -40,7 +40,7 @@ public:
         output << "Load : " << std::to_string(P.dP_Load) << endl;
         output << "Grid : " << std::to_string(P.dP_Grid) << endl;
         output << "PV : " << std::to_string(P.dP_PV) << endl;
-        output << "Day : " << std::to_string(P.iE_Day) << endl;
+        output << "Day : " << std::to_string(P.dE_Day) << endl;
         output << "Year : " << std::to_string(P.dE_Year) << endl;
         output << "Total : " << std::to_string(P.dE_Total) << endl;
         return output;

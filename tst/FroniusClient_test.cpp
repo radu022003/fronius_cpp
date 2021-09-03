@@ -183,7 +183,7 @@ TEST(test_Inverter2, get_api_version_from_inverter)
     EXPECT_DOUBLE_EQ(power.dP_Load, 5.9900000000000091);
     EXPECT_DOUBLE_EQ(power.dP_Grid, -511.99000000000001);
     EXPECT_DOUBLE_EQ(power.dP_PV, 941.60000000000002);
-    EXPECT_EQ(power.iE_Day, 6758);
+    EXPECT_DOUBLE_EQ(power.dE_Day, 6758);
     EXPECT_DOUBLE_EQ(power.dE_Total, 7604385.5);
     EXPECT_DOUBLE_EQ(power.dE_Year, 1342638.2000000002);
 
@@ -220,7 +220,7 @@ TEST(test_Inverter2, get_api_version_from_inverter2)
     EXPECT_DOUBLE_EQ(power.dP_Load, -57.649999999999977);
     EXPECT_DOUBLE_EQ(power.dP_Grid, -975.35000000000002);
     EXPECT_DOUBLE_EQ(power.dP_PV, 1033);
-    EXPECT_EQ(power.iE_Day, 15039);
+    EXPECT_EQ(power.dE_Day, 15039);
     EXPECT_DOUBLE_EQ(power.dE_Total, 2777190);
     EXPECT_DOUBLE_EQ(power.dE_Year, 2777198.75);
 
@@ -273,7 +273,7 @@ TEST(test_Inverter2, get_powerFlow_connection_refused)
     EXPECT_FLOAT_EQ(power.dP_Load, 0.0);
     EXPECT_FLOAT_EQ(power.dP_Grid, 0.0);
     EXPECT_FLOAT_EQ(power.dP_PV, 0.0);
-    EXPECT_EQ(power.iE_Day, 0);
+    EXPECT_FLOAT_EQ(power.dE_Day, 0.0);
     EXPECT_FLOAT_EQ(power.dE_Total, 0.0);
     EXPECT_FLOAT_EQ(power.dE_Year, 0.0);
 
@@ -310,9 +310,46 @@ TEST(test_Inverter2, get_powerflow_data)
     EXPECT_DOUBLE_EQ(power.dP_Load, -57);
     EXPECT_DOUBLE_EQ(power.dP_Grid, -975);
     EXPECT_DOUBLE_EQ(power.dP_PV, 1033);
-    EXPECT_EQ(power.iE_Day, 15039);
+    EXPECT_EQ(power.dE_Day, 15039);
     EXPECT_DOUBLE_EQ(power.dE_Total, 2777190);
     EXPECT_DOUBLE_EQ(power.dE_Year, 2777198);
+
+    EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
+    //delete shared pointer
+    session.~__shared_ptr();
+}
+
+TEST(test_Inverter2, get_powerflow_data_double_data)
+{
+    //arrange
+    //act
+    //assert
+    auto config = ReadConfig::create();
+    std::shared_ptr<YAML::Node> parentNode = config->parseConfig("config.yaml");
+    auto session = std::make_shared<HTTPClientSessionMock>();
+
+    auto inverter = FroniusClient::create(parentNode, session);
+
+    EXPECT_EQ(inverter->getHost(), "localhost");
+    EXPECT_EQ(inverter->getPort(), 80);
+
+    EXPECT_NE(config, nullptr);
+    EXPECT_NE(inverter, nullptr);
+
+    std::ostream &os = std::cout;
+    EXPECT_CALL(*session, sendRequest).WillOnce(ReturnRef(os));
+    EXPECT_CALL(*session, receiveResponse).WillOnce(ReturnRef(FroniusHybridSys_GetPowerFlowRealtimeData_double_values));
+
+    inverter->getPowerFlow();
+
+    const auto &power = inverter->getFlowPowerData();
+
+    EXPECT_DOUBLE_EQ(power.dP_Load, -57.2);
+    EXPECT_DOUBLE_EQ(power.dP_Grid, -975.2);
+    EXPECT_DOUBLE_EQ(power.dP_PV, 1033.2);
+    EXPECT_EQ(power.dE_Day, 15039.4);
+    EXPECT_DOUBLE_EQ(power.dE_Total, 2777190.3);
+    EXPECT_DOUBLE_EQ(power.dE_Year, 2777198.4);
 
     EXPECT_TRUE(testing::Mock::VerifyAndClearExpectations(session.get()));
     //delete shared pointer
@@ -347,7 +384,7 @@ TEST(test_Inverter2, get_powerflow_data_null_values)
     EXPECT_DOUBLE_EQ(power.dP_Load, 0);
     EXPECT_DOUBLE_EQ(power.dP_Grid, 0);
     EXPECT_DOUBLE_EQ(power.dP_PV, 0);
-    EXPECT_EQ(power.iE_Day, 0);
+    EXPECT_EQ(power.dE_Day, 0);
     EXPECT_DOUBLE_EQ(power.dE_Total, 0);
     EXPECT_DOUBLE_EQ(power.dE_Year, 0);
 
